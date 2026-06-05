@@ -8,6 +8,7 @@ export interface onPressReturn {
   countryDetails: CountryCode | null;
   phoneNumber: string;
   isValid: boolean;
+  correctLength: number;
 }
 
 // props to this compoent
@@ -121,25 +122,26 @@ export default function PhoneNumberField(props: PhoneNumberFieldProps) {
         console.debug(output, ouputWthOutMask);
         setinternalValue(output);
         if (textInputProps?.onPress) {
+          const correctLength =
+            matchedCountry.code.length + (matchedCountry.mask.split('#').length - 1);
           textInputProps?.onPress({
             countryDetails: matchedCountry || null,
             phoneNumber: ouputWthOutMask,
-            isValid:
-              !!matchedCountry &&
-              cleanedValue.length ===
-                matchedCountry.code.length + (matchedCountry.mask.split('#').length - 1),
+            isValid: !!matchedCountry && cleanedValue.length === correctLength,
+            correctLength,
           });
         }
       } else {
         setinternalValue(cleanedValue);
         if (textInputProps?.onPress) {
+          const correctLength =
+            (matchedCountry?.code ?? '').length +
+            ((matchedCountry?.mask ?? '').split('#').length - 1);
           textInputProps.onPress({
             countryDetails: matchedCountry || null,
             phoneNumber: cleanedValue,
-            isValid:
-              !!matchedCountry &&
-              cleanedValue.length ===
-                matchedCountry.code.length + (matchedCountry.mask.split('#').length - 1),
+            isValid: !!matchedCountry && cleanedValue.length === correctLength,
+            correctLength,
           });
         }
       }
