@@ -1,14 +1,12 @@
-import { DefaultTheme, DarkTheme } from '@react-navigation/native';
-import { useColorScheme } from 'react-native';
-import { useMemo } from 'react';
+import PhoneNumberField from 'components/PhoneNumberField/PhoneNumberField';
+import { SafeAreaView } from 'react-native';
 
 import 'react-native-gesture-handler';
 
-import Navigation from './navigation';
 
 export default function App() {
-  const colorScheme = useColorScheme();
-  const theme = useMemo(() => (colorScheme === 'dark' ? DarkTheme : DefaultTheme), [colorScheme]);
-
-  return <Navigation theme={theme} />;
+  return (<SafeAreaView>
+    <PhoneNumberField />
+    </SafeAreaView>)
 }
+
