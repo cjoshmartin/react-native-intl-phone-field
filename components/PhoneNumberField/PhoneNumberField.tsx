@@ -2,15 +2,23 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, TextInput, StyleSheet, Text } from 'react-native';
 
 import { CountryCode, countryCodeList } from './consts/regions';
+import { CountryId } from './enum/CountryIds';
+
+export interface onPressReturn {
+  countryDetails: CountryCode | null;
+  phoneNumber: string;
+  isValid: boolean;
+}
 
 // props to this compoent
 // whitelist of country codes of what is allowed to be entered in the phone number field. default is null
 // blacklist of countries that shouldn't appear in the list. default is null
 // underlining of the input field. default is false
 export interface PhoneNumberFieldProps extends React.ComponentProps<typeof TextInput> {
-  allowedCountryCodes?: string[] | null;
-  disallowedCountryCodes?: string[] | null;
+  allowedCountryCodes?: CountryId[] | null;
+  disallowedCountryCodes?: CountryId[] | null;
   underlineInput?: React.ReactNode | null;
+  onPress?: (outcome: onPressReturn) => void;
 }
 
 export default function PhoneNumberField(props: PhoneNumberFieldProps) {
@@ -53,21 +61,87 @@ export default function PhoneNumberField(props: PhoneNumberFieldProps) {
 
   const onChangeText = useCallback(
     (_value: string) => {
-      const cleanedValue = _value.replace(/\D/g, ''); // remove non-digit characters
-      console.log('cleanedValue', cleanedValue);
-      setinternalValue(cleanedValue);
-      textInputProps.onChangeText?.(cleanedValue);
+      const cleanedValue = _value.replace('+', ''); // remove non-digit characters
 
       // parse the country code from the phone number and set the country state
-      if (cleanedValue.length < 4){
-        const matchedCountry = filteredCountryCodes.find(({ code }) => {
-          // intentional to use _value here instead of cleanedValue because we want to match against the raw input value that includes the '+' sign and any formatting characters, since country codes are typically prefixed with a '+' and may be followed by formatting characters like dashes or parentheses. Using cleanedValue would remove these characters and could lead to incorrect matching of country codes.
-          const result = _value.startsWith(code);
-          console.log('checking code', code, 'against cleanedValue', cleanedValue, 'result', result);
-          return result;
-        });
-        console.log('matchedCountry', matchedCountry);
-        setCountry(matchedCountry || null);
+      let matchedCountry = null;
+      matchedCountry = filteredCountryCodes.find(({ code }) => {
+        // intentional to use _value here instead of cleanedValue because we want to match against the raw input value that includes the '+' sign and any formatting characters, since country codes are typically prefixed with a '+' and may be followed by formatting characters like dashes or parentheses. Using cleanedValue would remove these characters and could lead to incorrect matching of country codes.
+        const result = _value.startsWith(code);
+        console.debug(
+          'checking code',
+          code,
+          'against cleanedValue',
+          cleanedValue,
+          'result',
+          result
+        );
+        return result;
+      });
+      console.log('matchedCountry', matchedCountry);
+      setCountry(matchedCountry || null);
+
+      if (!!matchedCountry && cleanedValue.length >= 2) {
+        // apply masking to the phone number based on the matched country code
+        console.debug('---------------');
+        const countryCode = matchedCountry?.code.replace('+', '');
+        const mask = matchedCountry.mask;
+
+        console.debug('mask', mask, '\n');
+
+        const justDigits = cleanedValue.replace(/\D/g, '');
+        const restOfNumber = justDigits.slice(countryCode.length, justDigits.length);
+        let digitIndex = 0;
+        let maskedPart = '';
+
+        for (const char of mask) {
+          console.debug(
+            'char',
+            char,
+            'digitIndex',
+            digitIndex,
+            'restOfNumber',
+            restOfNumber,
+            'restOfNumber[digitIndex]',
+            restOfNumber[digitIndex],
+            'Output',
+            maskedPart
+          );
+
+          if (digitIndex >= restOfNumber.length) break;
+          if (char === '#') {
+            maskedPart += restOfNumber[digitIndex++];
+          } else {
+            maskedPart += char;
+          }
+        }
+        console.debug('---------------');
+        const output = countryCode + maskedPart;
+        const ouputWthOutMask = output.replace(/\D/g, '');
+        console.debug(output, ouputWthOutMask);
+        setinternalValue(output);
+        if (textInputProps?.onPress) {
+          textInputProps?.onPress({
+            countryDetails: matchedCountry || null,
+            phoneNumber: ouputWthOutMask,
+            isValid:
+              !!matchedCountry &&
+              cleanedValue.length ===
+                matchedCountry.code.length + (matchedCountry.mask.split('#').length - 1),
+          });
+        }
+      } else {
+        setinternalValue(cleanedValue);
+        if (textInputProps?.onPress) {
+          textInputProps.onPress({
+            countryDetails: matchedCountry || null,
+            phoneNumber: cleanedValue,
+            isValid:
+              !!matchedCountry &&
+              cleanedValue.length ===
+                matchedCountry.code.length + (matchedCountry.mask.split('#').length - 1),
+          });
+        }
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -79,7 +153,7 @@ export default function PhoneNumberField(props: PhoneNumberFieldProps) {
       <Input
         {...textInputProps}
         style={styles.input}
-        placeholder="+1-(317)-652-8413"
+        placeholder={country?.mask.replace('#', '_')}
         value={'+' + internalValue}
         onChangeText={onChangeText}
       />
