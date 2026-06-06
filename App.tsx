@@ -1,8 +1,45 @@
+import { OpinionatedPhoneNumberField } from 'components/PhoneNumberField/OpinionatedPhoneNumberField/OpinionatedPhoneNumberField';
 import PhoneNumberField, { onPressReturn } from 'components/PhoneNumberField/PhoneNumberField';
 import React from 'react';
-import { SafeAreaView, View, Text, StyleSheet, TextInput } from 'react-native';
+import { SafeAreaView, View, Text, StyleSheet, TextInput, Pressable } from 'react-native';
 
 import 'react-native-gesture-handler';
+
+function StyledTextInput(props: React.ComponentProps<typeof TextInput>) {
+  return (
+    <TextInput
+      {...props}
+      style={[
+        {
+          flex: 1,
+          borderWidth: 1,
+          borderColor: 'gray',
+          padding: 10,
+        },
+        props.style,
+      ]}
+    />
+  );
+}
+
+function StyledPhoneButton(props: React.ComponentProps<typeof Pressable>) {
+  return (
+    <Pressable
+      {...props}
+      style={[
+        {
+          flexDirection: 'row',
+          gap: 5,
+          paddingHorizontal: 5,
+          borderWidth: 1,
+          borderColor: 'gray',
+          alignItems: 'center',
+        },
+      ]}>
+      {props.children}
+    </Pressable>
+  );
+}
 
 export default function App() {
   const [value, setValue] = React.useState('');
@@ -16,8 +53,10 @@ export default function App() {
 
   return (
     <SafeAreaView>
-      <PhoneNumberField
-        underlineInput={TextInput}
+      <OpinionatedPhoneNumberField
+        underlineInput={StyledTextInput}
+        underlineButton={StyledPhoneButton}
+        underlineModal={null}
         onInputChange={onPress}
         value={value}
         style={styles.input}
@@ -61,9 +100,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   input: {
-    height: 40,
     margin: 12,
-    borderWidth: 1,
     padding: 10,
   },
 });

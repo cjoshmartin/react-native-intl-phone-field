@@ -32,11 +32,11 @@ export interface onPressReturn {
 export interface PhoneNumberFieldProps extends React.ComponentProps<typeof TextInput> {
   allowedCountryCodes?: CountryId[] | null;
   disallowedCountryCodes?: CountryId[] | null;
-  underlineInput?: React.ReactNode | null;
+  underlineInput?: typeof TextInput | React.ReactNode | null;
   onInputChange?: (outcome: onPressReturn) => void;
 }
 
-export default function PhoneNumberField(props: PhoneNumberFieldProps) {
+export function PhoneNumberField(props: PhoneNumberFieldProps) {
   const {
     allowedCountryCodes,
     disallowedCountryCodes,
@@ -75,8 +75,10 @@ export default function PhoneNumberField(props: PhoneNumberFieldProps) {
 
   const Input = useMemo(() => {
     if (!underlineInput) {
+      console.log('Using default TextInput');
       return TextInput;
     }
+    console.log("Using User's input");
     return underlineInput;
   }, [underlineInput]);
 
@@ -184,15 +186,14 @@ export default function PhoneNumberField(props: PhoneNumberFieldProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [textInputProps.onChangeText, setinternalValue, filteredCountryCodes]
   );
-
   return (
-    <View>
+    <>
       <Input
         {...textInputProps}
         placeholder={country?.mask.replace('#', '_')}
         value={'+' + internalValue}
         onChangeText={onChangeText}
       />
-    </View>
+    </>
   );
 }
