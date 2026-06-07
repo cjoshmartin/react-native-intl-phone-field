@@ -78,12 +78,14 @@ export function usePhoneFieldState({
 
   useEffect(() => {
     // Should only run on first render
-    console.debug('usePhoneFieldState useEffect HAS RAN!', filteredCountryCodes);
+    // console.debug('usePhoneFieldState useEffect HAS RAN!', filteredCountryCodes);
     const defaultRegion = getDefaultRegion(filteredCountryCodes);
     console.log(defaultRegion);
     setCountry(defaultRegion);
     onChangeText(defaultRegion?.code ?? ''); // set the default country code in the input field on load
-  }, [filteredCountryCodes, onChangeText]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     country,

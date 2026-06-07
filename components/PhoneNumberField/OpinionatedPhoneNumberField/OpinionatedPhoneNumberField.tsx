@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { View, Modal, Pressable } from 'react-native';
 import { onPressReturn, PhoneNumberField, PhoneNumberFieldProps } from '../PhoneNumberField';
 import { CountrySelector } from '../CountrySelector/CountrySelector';
-import { countryCodeList } from '../consts/regions';
 import { usePhoneFieldState } from '../hooks/UsePhoneFieldState';
 import { CountryId } from '../enum/CountryIds';
 

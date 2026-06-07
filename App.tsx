@@ -1,3 +1,4 @@
+import { CountryId } from 'components/PhoneNumberField/enum/CountryIds';
 import { OpinionatedPhoneNumberField } from 'components/PhoneNumberField/OpinionatedPhoneNumberField/OpinionatedPhoneNumberField';
 import { onPressReturn } from 'components/PhoneNumberField/PhoneNumberField';
 import React from 'react';
@@ -62,6 +63,31 @@ export default function App() {
         style={styles.input}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
+        disallowedCountryCodes={[
+          CountryId.ANTIGUA_AND_BARBUDA,
+          CountryId.ANGUILLA,
+          CountryId.UNITED_STATES_VIRGIN_ISLANDS,
+          CountryId.TURKS_AND_CAICOS_ISLANDS,
+          CountryId.TRINIDAD_AND_TOBAGO,
+          CountryId.SINT_MAARTEN,
+          CountryId.SAINT_VINCENT_AND_THE_GRENADINES,
+          CountryId.SAINT_LUCIA,
+          CountryId.SAINT_KITTS_AND_NEVIS,
+          CountryId.PUERTO_RICO,
+          CountryId.NORTHERN_MARIANA_ISLANDS,
+          CountryId.MONTSERRAT,
+          CountryId.JAMAICA,
+          CountryId.GUAM,
+          CountryId.GRENADA,
+          CountryId.DOMINICAN_REPUBLIC,
+          CountryId.DOMINICA,
+          CountryId.CAYMAN_ISLANDS,
+          CountryId.BRITISH_VIRGIN_ISLANDS,
+          CountryId.BERMUDA,
+          CountryId.BARBADOS,
+          CountryId.BAHAMAS,
+          CountryId.AMERICAN_SAMOA,
+        ]}
       />
       <View
         style={{
