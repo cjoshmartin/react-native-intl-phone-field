@@ -59,7 +59,7 @@ function CountrySelectorModal(props: CountrySelectorModalProps) {
 
 export interface CountrySelectorProps extends React.ComponentProps<typeof CountrySelectorButton> {
   filtedredCountryCodes?: CountryCode[] | null;
-  onSelectCountry: (country: CountryCode) => void;
+  onSelectCountry?: (country: CountryCode) => void;
   value: CountryCode | null;
   underlineButton?: typeof Pressable | null;
   underlineModal?: typeof Modal | null;

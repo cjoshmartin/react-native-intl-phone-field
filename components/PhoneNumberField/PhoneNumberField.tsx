@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, TextInput } from 'react-native';
+import { TextInput } from 'react-native';
 import { getLocales } from 'expo-localization';
 
 import { CountryCode, countryCodeList } from './consts/regions';
-import { CountryId } from './enum/CountryIds';
 
 function getDefaultRegion(filteredCountryCodes: CountryCode[]): CountryCode {
   const localization = getLocales();
@@ -30,21 +29,12 @@ export interface onPressReturn {
 // blacklist of countries that shouldn't appear in the list. default is null
 // underlining of the input field. default is false
 export interface PhoneNumberFieldProps extends React.ComponentProps<typeof TextInput> {
-  allowedCountryCodes?: CountryId[] | null;
-  disallowedCountryCodes?: CountryId[] | null;
   underlineInput?: typeof TextInput | React.ReactNode | null;
   onInputChange?: (outcome: onPressReturn) => void;
 }
 
 export function PhoneNumberField(props: PhoneNumberFieldProps) {
-  const {
-    allowedCountryCodes,
-    disallowedCountryCodes,
-    underlineInput,
-    value,
-    onPress,
-    ...textInputProps
-  } = props;
+  const { underlineInput, value, onPress, ...textInputProps } = props;
   const [internalValue, setinternalValue] = useState('');
   const [country, setCountry] = useState<CountryCode | null>(null);
 
@@ -54,22 +44,10 @@ export function PhoneNumberField(props: PhoneNumberFieldProps) {
     if (value) {
       setinternalValue(value);
     }
-    const filteredCountries = countryCodeList
-      .filter(({ id }) => {
-        if (allowedCountryCodes && !allowedCountryCodes.includes(id)) {
-          return false;
-        }
-        if (disallowedCountryCodes && disallowedCountryCodes.includes(id)) {
-          return false;
-        }
-        return true;
-      })
-      // sort by longer country codes first to ensure that we match the most specific country code when parsing the phone number
-      .sort((a, b) => b.code.length - a.code.length);
 
-    const defaultRegion = getDefaultRegion(filteredCountries);
-    setCountry(defaultRegion);
-    onChangeText(defaultRegion.code); // set the default country code in the input field on load
+    // const defaultRegion = getDefaultRegion(filteredCountries);
+    // setCountry(defaultRegion);
+    // onChangeText(defaultRegion.code); // set the default country code in the input field on load
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -82,42 +60,25 @@ export function PhoneNumberField(props: PhoneNumberFieldProps) {
     return underlineInput;
   }, [underlineInput]);
 
-  const filteredCountryCodes = useMemo(() => {
-    return (
-      countryCodeList
-        .filter(({ id }) => {
-          if (allowedCountryCodes && !allowedCountryCodes.includes(id)) {
-            return false;
-          }
-          if (disallowedCountryCodes && disallowedCountryCodes.includes(id)) {
-            return false;
-          }
-          return true;
-        })
-        // sort by longer country codes first to ensure that we match the most specific country code when parsing the phone number
-        .sort((a, b) => b.code.length - a.code.length)
-    );
-  }, [allowedCountryCodes, disallowedCountryCodes]);
-
   const onChangeText = useCallback(
     (_value: string) => {
       const cleanedValue = _value.replace('+', ''); // remove non-digit characters
 
       // parse the country code from the phone number and set the country state
       let matchedCountry = null;
-      matchedCountry = filteredCountryCodes.find(({ code }) => {
-        // intentional to use _value here instead of cleanedValue because we want to match against the raw input value that includes the '+' sign and any formatting characters, since country codes are typically prefixed with a '+' and may be followed by formatting characters like dashes or parentheses. Using cleanedValue would remove these characters and could lead to incorrect matching of country codes.
-        const result = _value.startsWith(code);
-        // console.debug(
-        //   'checking code',
-        //   code,
-        //   'against cleanedValue',
-        //   cleanedValue,
-        //   'result',
-        //   result
-        // );
-        return result;
-      });
+      // matchedCountry = filteredCountryCodes.find(({ code }) => {
+      //   // intentional to use _value here instead of cleanedValue because we want to match against the raw input value that includes the '+' sign and any formatting characters, since country codes are typically prefixed with a '+' and may be followed by formatting characters like dashes or parentheses. Using cleanedValue would remove these characters and could lead to incorrect matching of country codes.
+      //   const result = _value.startsWith(code);
+      //   // console.debug(
+      //   //   'checking code',
+      //   //   code,
+      //   //   'against cleanedValue',
+      //   //   cleanedValue,
+      //   //   'result',
+      //   //   result
+      //   // );
+      //   return result;
+      // });
       console.log('matchedCountry', matchedCountry);
       setCountry(matchedCountry || null);
 
@@ -184,7 +145,7 @@ export function PhoneNumberField(props: PhoneNumberFieldProps) {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [textInputProps.onChangeText, setinternalValue, filteredCountryCodes]
+    [textInputProps.onChangeText, setinternalValue]
   );
   return (
     <>
