@@ -168,8 +168,10 @@ export function CountrySelectorModal(props: CountrySelectorModalProps) {
                 <Text style={styles.sectionHeaderText}>{section.title}</Text>
               </View>
             )}
-            renderItem={({ item }) => {
+            renderItem={({ item, index, section }) => {
               const isSelected = item.id === props.value?.id;
+              const isFirst = index === 0;
+              const isLast = index === section.data.length - 1;
               return (
                 <Pressable
                   onPress={() => {
@@ -183,6 +185,10 @@ export function CountrySelectorModal(props: CountrySelectorModalProps) {
                     gap: spacing[1],
                     marginHorizontal: SIDE_SCREEN_PADDING,
                     backgroundColor: isSelected ? colors.blue[50] : colors.white,
+                    borderTopLeftRadius: isFirst ? radius.lg : 0,
+                    borderTopRightRadius: isFirst ? radius.lg : 0,
+                    borderBottomLeftRadius: isLast ? radius.lg : 0,
+                    borderBottomRightRadius: isLast ? radius.lg : 0,
                   }}>
                   <View
                     style={{
