@@ -6,6 +6,7 @@ import { getDefaultRegion } from '../utils/getDefaultRegion';
 import { onPressReturn } from '../PhoneNumberField';
 import { maskToPhoneNumber } from '../utils/maskToPhoneNumber';
 import { matchCountryCode } from '../utils/matchCountryCode';
+import { BACK_BUTTON, GLOBE_BUTTON, KEYPAD_KEY } from '../consts/KEYBOARD_LAYOUT';
 
 interface usePhoneFieldStateParams {
   allowedCountryCodes?: CountryId[] | null;
@@ -19,6 +20,7 @@ interface usePhoneFieldStateReturn {
   outcome?: onPressReturn;
   onChangeText: (phoneNumber: string) => void;
   onChangeFlag: (newCountry: CountryCode) => void;
+  onKeyPress: (_key: KEYPAD_KEY) => void;
 }
 
 export function usePhoneFieldState({
@@ -27,6 +29,8 @@ export function usePhoneFieldState({
 }: usePhoneFieldStateParams): usePhoneFieldStateReturn {
   const [country, setCountry] = useState<CountryCode | undefined>(undefined);
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>(undefined);
+  const phoneNumberRef = useRef(phoneNumber);
+  phoneNumberRef.current = phoneNumber;
   const [outcome, setOutcome] = useState<onPressReturn | undefined>(undefined);
 
   const filteredCountryCodes = useMemo(() => {
@@ -88,7 +92,24 @@ export function usePhoneFieldState({
     });
     setPhoneNumber(_phoneNumber);
     setCountry(newCountry);
+    // come back and hook up the buttons in list to this new function
+    // also think about what state variables we want to use to manage this application
+    // I want to add functionality that brings the most common phone number to the top
   }, []);
+
+  const onKeyPress = useCallback(
+    (_key: KEYPAD_KEY) => {
+      const current = phoneNumberRef.current;
+      const existing_number = '+' + current;
+
+      if (existing_number.length > 1 && _key.main === BACK_BUTTON) {
+        onChangeText(existing_number.slice(0, -1));
+      } else if (_key.main !== BACK_BUTTON && _key.main !== GLOBE_BUTTON) {
+        onChangeText('+' + current + _key.main);
+      }
+    },
+    [onChangeText]
+  );
 
   useEffect(() => {
     // Should only run on first render
@@ -108,5 +129,6 @@ export function usePhoneFieldState({
     outcome,
     onChangeText,
     onChangeFlag,
+    onKeyPress,
   };
 }

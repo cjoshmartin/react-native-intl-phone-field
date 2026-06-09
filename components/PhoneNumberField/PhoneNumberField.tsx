@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo, useRef } from 'react';
 import { TextInput } from 'react-native';
 
 import { CountryCode } from './consts/regions';
-import { maskToPhoneNumber } from './utils/maskToPhoneNumber';
-import { matchCountryCode } from './utils/matchCountryCode';
+import { useSharedValue } from 'react-native-reanimated';
+import { KEYPAD_KEY } from './consts/KEYBOARD_LAYOUT';
 
 export interface onPressReturn {
   countryDetails: CountryCode | null;
@@ -23,6 +23,8 @@ export interface PhoneNumberFieldProps extends React.ComponentProps<typeof TextI
 
 export function PhoneNumberField(props: PhoneNumberFieldProps) {
   const { underlineInput, ...textInputProps } = props;
+  const isOpen = useSharedValue(false);
+  const selectionRef = useRef({ start: 0, end: 0 });
 
   const Input = useMemo(() => {
     if (!underlineInput) {
@@ -32,13 +34,12 @@ export function PhoneNumberField(props: PhoneNumberFieldProps) {
   }, [underlineInput]);
 
   return (
-    <>
-      <Input
-        {...textInputProps}
-        // placeholder={country?.mask.replace('#', '_')}
-        value={'+' + props.value}
-        // onChangeText={onChangeText}
-      />
-    </>
+    <Input
+      {...textInputProps}
+      value={'+' + props.value}
+      showSoftInputOnFocus={false}
+      onPressIn={() => (isOpen.value = true)}
+      onSelectionChange={(e) => (selectionRef.current = e.nativeEvent.selection)}
+    />
   );
 }
