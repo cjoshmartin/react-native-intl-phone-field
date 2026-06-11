@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CountryCode } from '../consts/regions';
 import { CountryId } from '../enum/CountryIds';
 import { generateCountryCodeList } from '../utils/generateCountryCodeList';
@@ -11,6 +11,7 @@ import { BACK_BUTTON, GLOBE_BUTTON, KEYPAD_KEY } from '../consts/KEYBOARD_LAYOUT
 import { NativeSyntheticEvent, TextInputSelectionChangeEventData } from 'react-native';
 import { characterDeletion } from '../utils/characterDeletion';
 import { characterInsert } from '../utils/characterInsert';
+import { fromMaskedNumberToUnmaskedSelection } from '../utils/fromMaskedNumberToUnmaskedSelection';
 
 interface usePhoneFieldStateParams {
   allowedCountryCodes?: CountryId[] | null;
@@ -118,15 +119,15 @@ export function usePhoneFieldState({
     (_key: KEYPAD_KEY) => {
       const current = phoneNumberRef.current;
       console.log('current Phone-number: ', current);
-      const existing_number = '+' + (current ?? '');
-      const { start: rawStart, end: rawEnd } = selectionRef.current;
+      // Strip mask characters so digit-based positions from selectionRef align correctly
+      const existing_number = '+' + (current ?? '').replace(/\D/g, '');
       console.log('selection: ', selectionRef.current);
 
       if (_key.main === BACK_BUTTON) {
         const outcome = characterDeletion(existing_number, selectionRef.current);
         onChangeText(outcome);
       } else if (_key.main !== GLOBE_BUTTON) {
-        const outcome = characterInsert(existing_number, _key.main, rawStart, rawEnd);
+        const outcome = characterInsert(existing_number, _key.main, selectionRef.current);
         onChangeText(outcome);
       }
     },
@@ -144,23 +145,20 @@ export function usePhoneFieldState({
 
   const onTextSelection = useCallback(
     (e: NativeSyntheticEvent<TextInputSelectionChangeEventData>) => {
-      // TODO: update this function to take account that the number is masked 
-      // in the input and the selection will be off if it is between a '(', ')' or '-' and 
-      // should delete the char before on delete 
       const prev = selectionRef.current;
       const next = e.nativeEvent.selection;
-      console.log('Selection: ', next);
-      const wasSelected = prev.start !== prev.end;
-      const isNowCursor = next.start === next.end;
-      if (wasSelected && isNowCursor) {
-        // deselection just happened
-        console.log('Deselection...');
-        // setIsCurrentlySelected(false);
-      } else {
-        console.log('Selection...');
-        // setIsCurrentlySelected(true);
-      }
-      selectionRef.current = { ...next, hasBeenSelected: true };
+      console.log('Selection (masked): ', next);
+
+      // Convert a position in the masked display string to its equivalent
+      // digit-only position so characterDeletion/characterInsert work correctly
+      // regardless of mask characters like '(', ')', '-', ' '.
+      const maskedValue = '' + (phoneNumberRef.current ?? '');
+      console.log('maskedValue: ', maskedValue);
+      const start = fromMaskedNumberToUnmaskedSelection(maskedValue, next.start);
+      const end = fromMaskedNumberToUnmaskedSelection(maskedValue, next.end);
+      console.log('Selection (unmasked): ', { start, end });
+
+      selectionRef.current = { start, end, hasBeenSelected: true };
     },
     []
   );
