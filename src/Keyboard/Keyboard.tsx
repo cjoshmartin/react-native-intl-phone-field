@@ -13,6 +13,7 @@ import Animated, {
 import KeyboardToolbar from './KeyboardToolbar';
 import { spacing, radius, padding } from '../Styling/Sizing';
 import { colors } from '../Styling/Colors';
+import { Feather } from '@expo/vector-icons';
 
 export interface PasteErrorModalProps extends React.ComponentProps<typeof Modal> {
   isPasteErrorVisible: boolean;
@@ -132,13 +133,20 @@ function Keyboard(props: KeyboardProps) {
           animationType="fade">
           <Pressable style={pasteErrorStyles.overlay} onPress={dismissPasteError}>
             <View style={pasteErrorStyles.card}>
-              <Text style={pasteErrorStyles.title}>Cannot Paste</Text>
-              <Text style={pasteErrorStyles.message}>
-                Clipboard does not contain a valid phone number.
-              </Text>
-              <Pressable style={pasteErrorStyles.button} onPress={dismissPasteError}>
-                <Text style={pasteErrorStyles.buttonText}>OK</Text>
-              </Pressable>
+              <View style={pasteErrorStyles.cardContent}>
+                <View style={pasteErrorStyles.textContent}>
+                  <View style={pasteErrorStyles.titleContainer}>
+                    <Feather name="alert-triangle" size={spacing[6]} />
+                    <Text style={pasteErrorStyles.title}>Cannot Paste</Text>
+                  </View>
+                  <Text style={pasteErrorStyles.message}>
+                    Clipboard does not contain a valid phone number.
+                  </Text>
+                </View>
+                <Pressable style={pasteErrorStyles.button} onPress={dismissPasteError}>
+                  <Text style={pasteErrorStyles.buttonText}>OK</Text>
+                </Pressable>
+              </View>
             </View>
           </Pressable>
         </Modal>
@@ -160,11 +168,18 @@ function Keyboard(props: KeyboardProps) {
           animationType="fade">
           <Pressable style={copySuccessStyles.overlay} onPress={dismissCopySuccess}>
             <View style={copySuccessStyles.card}>
-              <Text style={copySuccessStyles.title}>Copied</Text>
-              <Text style={copySuccessStyles.message}>Phone number copied to clipboard.</Text>
-              <Pressable style={copySuccessStyles.button} onPress={dismissCopySuccess}>
-                <Text style={copySuccessStyles.buttonText}>OK</Text>
-              </Pressable>
+              <View style={copySuccessStyles.cardContent}>
+                <View style={copySuccessStyles.textContent}>
+                  <View style={copySuccessStyles.titleContainer}>
+                    <Feather name="clipboard" size={spacing[6]} />
+                    <Text style={copySuccessStyles.title}>Copied</Text>
+                  </View>
+                  <Text style={copySuccessStyles.message}>Phone number copied to clipboard.</Text>
+                </View>
+                <Pressable style={copySuccessStyles.button} onPress={dismissCopySuccess}>
+                  <Text style={copySuccessStyles.buttonText}>OK</Text>
+                </Pressable>
+              </View>
             </View>
           </Pressable>
         </Modal>
@@ -201,14 +216,27 @@ const pasteErrorStyles = StyleSheet.create({
     borderRadius: radius.xl,
     padding: padding[5],
     width: '100%',
-    maxWidth: 320,
-    gap: spacing[3],
+    maxWidth: 250,
+    maxHeight: 220,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardContent: {},
+  textContent: {
+    flex: 4,
+    gap: spacing[2],
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    gap: spacing[2],
     alignItems: 'center',
   },
   title: {
-    fontSize: 16,
+    fontSize: spacing[6],
     fontWeight: '600',
-    color: colors.gray[900],
+    color: colors.black,
   },
   message: {
     fontSize: 14,
@@ -217,15 +245,19 @@ const pasteErrorStyles = StyleSheet.create({
   },
   button: {
     marginTop: spacing[2],
-    backgroundColor: colors.gray[100],
+    backgroundColor: colors.red[800],
     borderRadius: radius.lg,
     paddingVertical: spacing[2],
     paddingHorizontal: spacing[8],
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
     fontSize: 15,
     fontWeight: '500',
-    color: colors.gray[800],
+    color: colors.white,
+    textAlign: 'center',
   },
 });
 
@@ -242,30 +274,49 @@ const copySuccessStyles = StyleSheet.create({
     borderRadius: radius.xl,
     padding: padding[5],
     width: '100%',
-    maxWidth: 320,
-    gap: spacing[3],
+    maxWidth: 250,
+    maxHeight: 220,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardContent: {},
+  textContent: {
+    flex: 4,
+    gap: spacing[2],
+    // justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    gap: spacing[1],
     alignItems: 'center',
   },
   title: {
-    fontSize: 16,
+    fontSize: spacing[6],
     fontWeight: '600',
-    color: colors.green[700],
+    color: colors.black,
   },
   message: {
     fontSize: 14,
     color: colors.gray[500],
+
     textAlign: 'center',
   },
   button: {
     marginTop: spacing[2],
-    backgroundColor: colors.green[50],
+    backgroundColor: colors.green[800],
     borderRadius: radius.lg,
     paddingVertical: spacing[2],
     paddingHorizontal: spacing[8],
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
     fontSize: 15,
     fontWeight: '500',
-    color: colors.green[700],
+    color: colors.white,
+    textAlign: 'center',
   },
 });
