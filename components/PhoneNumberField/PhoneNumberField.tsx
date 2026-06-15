@@ -1,4 +1,4 @@
-import { MutableRefObject, useMemo } from 'react';
+import { useMemo } from 'react';
 import { NativeSyntheticEvent, TextInput, TextInputSelectionChangeEventData } from 'react-native';
 
 import { CountryCode } from './consts/regions';

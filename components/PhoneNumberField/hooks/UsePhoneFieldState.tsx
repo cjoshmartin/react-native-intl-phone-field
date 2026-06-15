@@ -18,6 +18,7 @@ import { NativeSyntheticEvent, TextInputSelectionChangeEventData } from 'react-n
 import { characterDeletion } from '../utils/characterDeletion';
 import { characterInsert } from '../utils/characterInsert';
 import { fromMaskedNumberToUnmaskedSelection } from '../utils/fromMaskedNumberToUnmaskedSelection';
+import { fromUnmaskedToMaskedPosition } from '../utils/fromUnmaskedToMaskedPosition';
 
 interface usePhoneFieldStateParams {
   allowedCountryCodes?: CountryId[] | null;
@@ -39,6 +40,7 @@ interface usePhoneFieldStateReturn {
   closeKeyboard: () => void;
   onTextSelection: (e: NativeSyntheticEvent<TextInputSelectionChangeEventData>) => void;
   onClearText: () => void;
+  cursorPosition: { start: number; end: number };
 }
 
 export function usePhoneFieldState({
@@ -50,6 +52,10 @@ export function usePhoneFieldState({
   const phoneNumberRef = useRef(phoneNumber);
   const [outcome, setOutcome] = useState<onPressReturn | undefined>(undefined);
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState<{ start: number; end: number }>({
+    start: 1,
+    end: 1,
+  });
   const selectionRef = useRef<SELECTION_TYPE>({
     start: 1,
     end: 1,
@@ -143,37 +149,32 @@ export function usePhoneFieldState({
   const onKeyPress = useCallback(
     (_key: KEYPAD_KEY) => {
       const current = phoneNumberRef.current;
-      console.log('current Phone-number: ', current);
-      // Strip mask characters so digit-based positions from selectionRef align correctly
       const existing_number = '+' + (current ?? '').replace(/\D/g, '');
-      console.log('selection: ', selectionRef.current, 'Number Length: ', existing_number.length);
+      const { start, end } = selectionRef.current;
 
       if (_key.main === BACK_BUTTON) {
-        const { start, end } = selectionRef.current;
-
-        // intendedCursorPosRef.current = start !== end ? start : Math.max(1, start - 1);
-
-        const outcome = characterDeletion(existing_number, selectionRef.current);
-        onChangeText(outcome);
-        if (start > 1) {
-          selectionRef.current = { start: start - 1, end: start - 1, hasBeenSelected: true };
+        const isRange = start !== end;
+        if (start > 0 || isRange) {
+          const outcome = characterDeletion(existing_number, selectionRef.current);
+          onChangeText(outcome);
+          if (start > 0) {
+            selectionRef.current = { start: start - 1, end: start - 1, hasBeenSelected: true };
+          }
         }
-        console.log('Updated selectionRef.current: ', selectionRef.current);
       } else if (_key.main === CLEAR_BUTTON) {
         onChangeText('');
         selectionRef.current = { start: 0, end: 0, hasBeenSelected: false };
-        console.log('Updated selectionRef.current: ', selectionRef.current);
       } else if (_key.main !== GLOBE_BUTTON) {
-        const { start, end } = selectionRef.current;
         const outcome = characterInsert(existing_number, _key.main, selectionRef.current);
         onChangeText(outcome);
-
-        if (phoneNumberRef.current && selectionRef.current.start < phoneNumberRef.current?.length) {
+        if (phoneNumberRef.current && selectionRef.current.start < phoneNumberRef.current.length) {
           selectionRef.current = { start: start + 1, end: start + 1, hasBeenSelected: true };
         }
       }
 
-      console.log(phoneNumberRef.current, 'Updated selectionRef.current: ', selectionRef.current);
+      const newMasked = '+' + (phoneNumberRef.current ?? '');
+      const maskedStart = fromUnmaskedToMaskedPosition(newMasked, selectionRef.current.start);
+      setCursorPosition({ start: maskedStart, end: maskedStart });
     },
     [onChangeText]
   );
@@ -189,20 +190,13 @@ export function usePhoneFieldState({
 
   const onTextSelection = useCallback(
     (e: NativeSyntheticEvent<TextInputSelectionChangeEventData>) => {
-      const prev = selectionRef.current;
       const next = e.nativeEvent.selection;
-      console.log('Selection (masked): ', next);
-
-      // Convert a position in the masked display string to its equivalent
-      // digit-only position so characterDeletion/characterInsert work correctly
-      // regardless of mask characters like '(', ')', '-', ' '.
-      const maskedValue = '' + (phoneNumberRef.current ?? '');
-      console.log('maskedValue: ', maskedValue);
+      // Include '+' so maskedPoint indexes align with the displayed string
+      const maskedValue = '+' + (phoneNumberRef.current ?? '');
       const start = fromMaskedNumberToUnmaskedSelection(maskedValue, next.start);
       const end = fromMaskedNumberToUnmaskedSelection(maskedValue, next.end);
-      console.log('Selection (unmasked): ', { start, end });
-
       selectionRef.current = { start, end, hasBeenSelected: true, hasBeenConsumed: false };
+      setCursorPosition({ start: next.start, end: next.end });
     },
     []
   );
@@ -233,5 +227,6 @@ export function usePhoneFieldState({
     closeKeyboard,
     onTextSelection,
     onClearText,
+    cursorPosition,
   };
 }

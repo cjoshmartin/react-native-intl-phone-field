@@ -75,7 +75,7 @@ export function OpinionatedPhoneNumberField({
           onChangeText={onChangeText}
           onOpen={openKeyboard}
           onTextSelection={onTextSelection}
-          // selection={cursorPosition}
+          selection={cursorPosition}
         />
       </View>
       <Keyboard
