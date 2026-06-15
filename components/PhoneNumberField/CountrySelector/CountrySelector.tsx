@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CountryCode } from '../consts/regions';
 import { Modal, Pressable, Text } from 'react-native';
 import { CountrySelectorModal } from './CountrySelectorModal';
@@ -36,35 +36,41 @@ export interface CountrySelectorProps extends React.ComponentProps<typeof Countr
   value: CountryCode | null;
   underlineButton?: typeof Pressable | null;
   underlineModal?: typeof Modal | null;
+  onOpenChange?: (open: boolean) => void;
 }
 export function CountrySelector(props: CountrySelectorProps) {
-  // Implementation for CountrySelector component
   const [internalValue, setInternalValue] = useState(props.value);
-  const [isOpen, setIsOpen] = useState(false);
-  const { filtedredCountryCodes, onSelectCountry } = props;
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const { filtedredCountryCodes, onSelectCountry, onOpenChange } = props;
+
+  const isControlled = props.isOpen !== undefined;
+  const effectiveIsOpen = isControlled ? (props.isOpen ?? false) : internalIsOpen;
+
+  const toggle = useCallback(() => {
+    const next = !effectiveIsOpen;
+    if (!isControlled) setInternalIsOpen(next);
+    onOpenChange?.(next);
+  }, [effectiveIsOpen, isControlled, onOpenChange]);
 
   useEffect(() => {
-    // Update internal value when prop value changes
     setInternalValue(props.value);
   }, [props.value]);
 
   return (
-    // Render the country selector UI here
-    // This could include a button to open a modal with the list of countries, and the logic to handle selection
     <>
       <CountrySelectorButton
         {...props}
         underlineButton={props.underlineButton}
         value={internalValue}
-        isOpen={isOpen}
-        onPress={() => setIsOpen((prev) => !prev)}
+        isOpen={effectiveIsOpen}
+        onPress={toggle}
       />
       <CountrySelectorModal
         value={internalValue}
         onSelectCountry={onSelectCountry}
         UserCountryCodes={filtedredCountryCodes}
-        isOpen={isOpen}
-        toggleModalVisablity={() => setIsOpen((prev) => !prev)}
+        isOpen={effectiveIsOpen}
+        toggleModalVisablity={toggle}
       />
     </>
   );

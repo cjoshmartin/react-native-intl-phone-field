@@ -39,6 +39,9 @@ export function OpinionatedPhoneNumberField({
     isKeyboardOpen,
     openKeyboard,
     closeKeyboard,
+    isCountrySelectorOpen,
+    openCountrySelector,
+    closeCountrySelector,
     onTextSelection,
     cursorPosition,
   } = usePhoneFieldState({
@@ -68,6 +71,8 @@ export function OpinionatedPhoneNumberField({
           underlineButton={underlineButton}
           underlineModal={underlineModal}
           filtedredCountryCodes={filteredCountryCodes}
+          isOpen={isCountrySelectorOpen}
+          onOpenChange={(open) => (open ? openCountrySelector() : closeCountrySelector())}
         />
         <PhoneNumberField
           {...props}

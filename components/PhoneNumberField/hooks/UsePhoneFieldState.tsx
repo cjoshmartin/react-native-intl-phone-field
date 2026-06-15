@@ -38,6 +38,9 @@ interface usePhoneFieldStateReturn {
   isKeyboardOpen: boolean;
   openKeyboard: () => void;
   closeKeyboard: () => void;
+  isCountrySelectorOpen: boolean;
+  openCountrySelector: () => void;
+  closeCountrySelector: () => void;
   onTextSelection: (e: NativeSyntheticEvent<TextInputSelectionChangeEventData>) => void;
   onClearText: () => void;
   cursorPosition: { start: number; end: number };
@@ -65,6 +68,10 @@ export function usePhoneFieldState({
 
   const openKeyboard = useCallback(() => setIsKeyboardOpen(true), []);
   const closeKeyboard = useCallback(() => setIsKeyboardOpen(false), []);
+
+  const [isCountrySelectorOpen, setIsCountrySelectorOpen] = useState(false);
+  const openCountrySelector = useCallback(() => setIsCountrySelectorOpen(true), []);
+  const closeCountrySelector = useCallback(() => setIsCountrySelectorOpen(false), []);
 
   const filteredCountryCodes = useMemo(() => {
     return generateCountryCodeList(
@@ -167,7 +174,9 @@ export function usePhoneFieldState({
       } else if (_key.main === CLEAR_BUTTON) {
         onChangeText('');
         selectionRef.current = { start: 0, end: 0, hasBeenSelected: false };
-      } else if (_key.main !== GLOBE_BUTTON) {
+      } else if (_key.main === GLOBE_BUTTON) {
+        openCountrySelector();
+      } else {
         const outcome = characterInsert(existing_number, _key.main, selectionRef.current);
         onChangeText(outcome);
         if (phoneNumberRef.current && selectionRef.current.start < phoneNumberRef.current.length) {
@@ -228,6 +237,9 @@ export function usePhoneFieldState({
     isKeyboardOpen,
     openKeyboard,
     closeKeyboard,
+    isCountrySelectorOpen,
+    openCountrySelector,
+    closeCountrySelector,
     onTextSelection,
     onClearText,
     cursorPosition,

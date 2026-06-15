@@ -21,7 +21,7 @@ function KeypadButton({ currentKey, onPress }: KeypadButtonProps) {
       <KeypadButtonContainer
         bgColor={null}
         bgPressedColor={'background-color: rgba(0, 0, 0, 0.1);'}
-        onPress={() => onCountryPickerOpenChange(true)}
+        onPress={handlePress}
         key="country-button">
         <Feather name="globe" className="text-4xl text-typography-black" />
       </KeypadButtonContainer>
