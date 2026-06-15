@@ -13,7 +13,7 @@ export { CountrySelectorModal } from './CountrySelector/CountrySelectorModal';
 export type { CountrySelectorModalProps } from './CountrySelector/CountrySelectorModal';
 
 export { default as Keyboard } from './Keyboard/Keyboard';
-export type { KeyboardProps } from './Keyboard/Keyboard';
+export type { KeyboardProps, PasteErrorModalProps, CopySuccessModalProps } from './Keyboard/Keyboard';
 
 // State management hook
 export { usePhoneFieldState } from './hooks/UsePhoneFieldState';

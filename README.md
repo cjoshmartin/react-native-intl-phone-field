@@ -9,10 +9,10 @@ An international phone number input for React Native with country selection, per
 - Automatic country detection from the device locale on mount
 - Per-country number formatting (parentheses, dashes, spaces)
 - Country selector modal with search and recently-used countries
-- Copy / paste support
+- Copy / paste support with built-in feedback modals (customizable)
 - Cursor position tracking inside masked input
 - Filter countries via allow-list or deny-list
-- Fully customizable: swap in your own `TextInput`, `Pressable`, or `Modal`
+- Fully customizable: swap in your own `TextInput`, `Pressable`, `Modal`, or feedback modals
 - Full TypeScript support
 
 ## Installation
@@ -39,7 +39,7 @@ Follow each library's setup guide for any native configuration required.
 
 ## Setup
 
-Wrap your app (or the screen that uses this component) in `PortalProvider` and render a `PortalHost`. The custom keyboard renders through a portal to escape z-index stacking.
+Wrap your app (or the screen that uses this component) in `PortalProvider` and render a `PortalHost`. The custom keyboard and feedback modals render through a portal to escape z-index stacking.
 
 ```tsx
 import { PortalProvider, PortalHost } from 'react-native-teleport';
@@ -86,6 +86,8 @@ Extends all `TextInput` props plus:
 | `underlineInput` | `React.ComponentType` | No | Replace the default `TextInput` with your own styled component |
 | `underlineButton` | `React.ComponentType` | No | Replace the country selector button with your own styled `Pressable` |
 | `underlineModal` | `React.ComponentType` | No | Replace the country selector modal entirely |
+| `underlinePasteErrorModal` | `React.ComponentType<PasteErrorModalProps>` | No | Replace the built-in "cannot paste" modal |
+| `underlineCopySuccessModal` | `React.ComponentType<CopySuccessModalProps>` | No | Replace the built-in "copied" confirmation modal |
 | `style` | `ViewStyle` | No | Style applied to the outer row container |
 
 ### Custom styling example
@@ -131,6 +133,77 @@ const ALLOWED = [CountryId.UNITED_STATES, CountryId.CANADA, CountryId.MEXICO];
 
 <IntlPhoneField
   allowedCountryCodes={ALLOWED}
+  onOutcomeChange={(outcome) => console.log(outcome)}
+/>
+```
+
+---
+
+## Copy and paste feedback modals
+
+When the user taps **Copy**, the keyboard shows a "Copied" confirmation modal. When the user taps **Paste** and the clipboard does not contain a recognisable phone number, a "Cannot Paste" error modal appears. Both modals have built-in defaults and can be replaced with your own UI.
+
+### Default behaviour
+
+No configuration needed — the defaults work out of the box:
+
+- **Copy success** — a modal with the title "Copied" and the message "Phone number copied to clipboard."
+- **Paste error** — a modal with the title "Cannot Paste" and the message "Clipboard does not contain a valid phone number."
+
+Both dismiss when the user taps OK or taps the backdrop.
+
+### Replacing the paste-error modal
+
+Pass a component that accepts `PasteErrorModalProps` to `underlinePasteErrorModal`:
+
+```tsx
+import { Modal, View, Text, Pressable } from 'react-native';
+import { IntlPhoneField, PasteErrorModalProps } from 'react-native-intl-phone-field';
+
+function MyPasteErrorModal({ isPasteErrorVisible, dismissPasteError }: PasteErrorModalProps) {
+  return (
+    <Modal visible={isPasteErrorVisible} transparent animationType="fade" onRequestClose={dismissPasteError}>
+      <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }} onPress={dismissPasteError}>
+        <View style={{ backgroundColor: '#fff', borderRadius: 12, padding: 24, width: 280 }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 8 }}>Invalid number</Text>
+          <Text style={{ color: '#666' }}>Paste a phone number with a country code (e.g. +1 555 123 4567).</Text>
+          <Pressable onPress={dismissPasteError} style={{ marginTop: 16, alignSelf: 'flex-end' }}>
+            <Text style={{ color: '#007AFF', fontWeight: '600' }}>Got it</Text>
+          </Pressable>
+        </View>
+      </Pressable>
+    </Modal>
+  );
+}
+
+<IntlPhoneField
+  underlinePasteErrorModal={MyPasteErrorModal}
+  onOutcomeChange={(outcome) => console.log(outcome)}
+/>
+```
+
+### Replacing the copy-success modal
+
+Pass a component that accepts `CopySuccessModalProps` to `underlineCopySuccessModal`:
+
+```tsx
+import { Modal, View, Text, Pressable } from 'react-native';
+import { IntlPhoneField, CopySuccessModalProps } from 'react-native-intl-phone-field';
+
+function MyCopySuccessModal({ isCopySuccessVisible, dismissCopySuccess }: CopySuccessModalProps) {
+  return (
+    <Modal visible={isCopySuccessVisible} transparent animationType="fade" onRequestClose={dismissCopySuccess}>
+      <Pressable style={{ flex: 1, justifyContent: 'flex-end', padding: 16 }} onPress={dismissCopySuccess}>
+        <View style={{ backgroundColor: '#22c55e', borderRadius: 12, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <Text style={{ color: '#fff', fontSize: 15, fontWeight: '600' }}>✓ Copied to clipboard</Text>
+        </View>
+      </Pressable>
+    </Modal>
+  );
+}
+
+<IntlPhoneField
+  underlineCopySuccessModal={MyCopySuccessModal}
   onOutcomeChange={(outcome) => console.log(outcome)}
 />
 ```
@@ -238,7 +311,7 @@ The state management hook that powers `IntlPhoneField`. Returns all state and ha
 | `onKeyPress` | `(key: KEYPAD_KEY) => void` | Pass to `Keyboard.onKeyPress` |
 | `onTextSelection` | `(e: NativeSyntheticEvent<...>) => void` | Pass to `PhoneNumberField.onTextSelection` |
 | `onCopy` | `() => void` | Copies the current number to the clipboard |
-| `onPaste` | `() => void` | Pastes from the clipboard into the field |
+| `onPaste` | `() => Promise<boolean>` | Pastes from clipboard — resolves `true` on success, `false` if the clipboard content is not a recognisable phone number |
 | `onClearText` | `() => void` | Resets the field to the country code only |
 | `openKeyboard` | `() => void` | — |
 | `closeKeyboard` | `() => void` | — |
@@ -280,7 +353,7 @@ The country flag button + selector modal. Supports both controlled (`isOpen`) an
 
 ### `Keyboard`
 
-The custom phone keypad. Renders via a `PortalHost` (using `react-native-teleport`) and animates in/out with `react-native-reanimated`.
+The custom phone keypad. Renders via a `PortalHost` and animates in/out with `react-native-reanimated`. Manages copy/paste feedback modals internally.
 
 | Prop | Type | Description |
 |------|------|-------------|
@@ -289,7 +362,9 @@ The custom phone keypad. Renders via a `PortalHost` (using `react-native-telepor
 | `onKeyPress` | `(key: KEYPAD_KEY) => void` | Called for every key tap |
 | `value` | `string` | Current phone number string (shown in the toolbar) |
 | `onCopy` | `() => void` | Called when the Copy button is pressed |
-| `onPaste` | `() => void` | Called when the Paste button is pressed |
+| `onPaste` | `() => Promise<boolean>` | Called when the Paste button is pressed — return `false` to trigger the paste-error modal |
+| `underlinePasteErrorModal` | `React.ComponentType<PasteErrorModalProps>` | Replace the built-in "cannot paste" modal |
+| `underlineCopySuccessModal` | `React.ComponentType<CopySuccessModalProps>` | Replace the built-in "copied" confirmation modal |
 
 ---
 
@@ -303,6 +378,28 @@ interface PhoneFieldOutcome {
   isValid: boolean;           // true when digit count matches the country's mask
   correctLength: number;      // total character length when fully formatted (e.g. "+1 (555) 123-4567".length)
   countryDetails: CountryCode | null;
+}
+```
+
+### `PasteErrorModalProps`
+
+Received by a custom paste-error modal component.
+
+```ts
+interface PasteErrorModalProps extends React.ComponentProps<typeof Modal> {
+  isPasteErrorVisible: boolean;   // whether the modal should be visible
+  dismissPasteError: () => void;  // call this to close the modal
+}
+```
+
+### `CopySuccessModalProps`
+
+Received by a custom copy-success modal component.
+
+```ts
+interface CopySuccessModalProps extends React.ComponentProps<typeof Modal> {
+  isCopySuccessVisible: boolean;   // whether the modal should be visible
+  dismissCopySuccess: () => void;  // call this to close the modal
 }
 ```
 
