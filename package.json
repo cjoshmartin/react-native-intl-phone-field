@@ -1,5 +1,5 @@
 {
-  "name": "my-expo-app",
+  "name": "react-native-intl-phone-field",
   "version": "1.0.0",
   "scripts": {
     "android": "expo run:android",
@@ -42,7 +42,7 @@
     "typescript": "~5.9.2"
   },
   "main": "node_modules/expo/AppEntry.js",
-  "private": true,
+  "private": false,
   "jest": {
     "preset": "jest-expo",
     "testMatch": ["**/*.test.(ts|tsx)"],
