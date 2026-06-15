@@ -38,7 +38,6 @@ interface usePhoneFieldStateReturn {
   openKeyboard: () => void;
   closeKeyboard: () => void;
   onTextSelection: (e: NativeSyntheticEvent<TextInputSelectionChangeEventData>) => void;
-  cursorPosition: { start: number; end: number } | undefined;
   onClearText: () => void;
 }
 
@@ -57,12 +56,6 @@ export function usePhoneFieldState({
     hasBeenSelected: false,
     hasBeenConsumed: true,
   });
-  const [cursorPosition, setCursorPosition] = useState<{ start: number; end: number } | undefined>(
-    undefined
-  );
-  // Holds the desired post-edit cursor position (in D = '+' + digits space) set by onKeyPress,
-  // consumed by onChangeText once the new masked string is available.
-  const intendedCursorPosRef = useRef<number | null>(null);
 
   const openKeyboard = useCallback(() => setIsKeyboardOpen(true), []);
   const closeKeyboard = useCallback(() => setIsKeyboardOpen(false), []);
@@ -210,9 +203,6 @@ export function usePhoneFieldState({
       console.log('Selection (unmasked): ', { start, end });
 
       selectionRef.current = { start, end, hasBeenSelected: true, hasBeenConsumed: false };
-      // Keep the controlled selection prop in sync so the TextInput
-      // cursor stays where the user tapped.
-      setCursorPosition(next);
     },
     []
   );
@@ -242,7 +232,6 @@ export function usePhoneFieldState({
     openKeyboard,
     closeKeyboard,
     onTextSelection,
-    cursorPosition,
     onClearText,
   };
 }
