@@ -95,10 +95,13 @@ export function usePhoneFieldState({
         console.debug(output, ouputWthOutMask);
 
         const correctLength = (matchedCountry.code + matchedCountry.mask).length;
+        const expectedDigitCount =
+          matchedCountry.code.replace(/\D/g, '').length +
+          matchedCountry.mask.replace(/[^#]/g, '').length;
         setOutcome({
           countryDetails: matchedCountry || null,
           phoneNumber: ouputWthOutMask,
-          isValid: !!matchedCountry && cleanedValue.length + 1 === correctLength,
+          isValid: ouputWthOutMask.length === expectedDigitCount,
           correctLength,
         });
       } else {
@@ -108,7 +111,7 @@ export function usePhoneFieldState({
         setOutcome({
           countryDetails: matchedCountry || null,
           phoneNumber: cleanedValue,
-          isValid: !!matchedCountry && cleanedValue.length + 1 === correctLength,
+          isValid: false,
           correctLength,
         });
       }
