@@ -151,6 +151,17 @@ export function usePhoneFieldState({
     setPhoneNumber(_phoneNumber);
     phoneNumberRef.current = _phoneNumber;
     setCountry(newCountry);
+
+    const newMasked = '+' + _phoneNumber;
+    const unmaskedEnd = _phoneNumber.replace(/\D/g, '').length;
+    selectionRef.current = {
+      start: unmaskedEnd,
+      end: unmaskedEnd,
+      hasBeenSelected: true,
+      hasBeenConsumed: false,
+    };
+    const maskedEnd = fromUnmaskedToMaskedPosition(newMasked, unmaskedEnd);
+    setCursorPosition({ start: maskedEnd, end: maskedEnd });
   }, []);
 
   const onKeyPress = useCallback(
