@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { Pressable, PressableProps, StyleSheet, View, Text } from 'react-native';
+import { Pressable, PressableProps, StyleSheet, View } from 'react-native';
 import { colors } from '../Styling/Colors';
-import { spacing } from '@/Styling/Sizing';
-// import { Box } from '@/components/ui/box';
-// import { GetColor } from '@/utils/get-color';
+import { spacing } from '../Styling/Sizing';
 
 interface KeypadButtonContainerProps extends PressableProps {
   children: React.ReactNode;
