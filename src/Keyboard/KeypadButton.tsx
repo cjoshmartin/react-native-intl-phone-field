@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo } from 'react';
 import { BACK_BUTTON, CLEAR_BUTTON, GLOBE_BUTTON, KEYPAD_KEY } from '../consts/KEYBOARD_LAYOUT';
 import KeypadButtonContainer from './KeypadButtonContainer';
-import { Text } from 'react-native';
+import { Platform, Text } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 export interface KeypadButtonProps {
@@ -20,6 +20,7 @@ function KeypadButton({ currentKey, onPress }: KeypadButtonProps) {
     return (
       <KeypadButtonContainer
         bgColor={null}
+        shouldDisableShadow={Platform.OS === 'android'}
         bgPressedColor={'background-color: rgba(0, 0, 0, 0.1);'}
         onPress={handlePress}
         key="country-button">
@@ -32,7 +33,10 @@ function KeypadButton({ currentKey, onPress }: KeypadButtonProps) {
     return (
       <KeypadButtonContainer
         bgColor={null}
-        bgPressedColor={'background-color: rgba(0, 0, 0, 0.1);'}
+        bgPressedColor={
+          'background-color: rgba(0, 0, 0, 0.1);'
+        }
+        shouldDisableShadow={Platform.OS === 'android'}
         onPress={handlePress}
         onLongPress={handleClear}
         key="back-button">

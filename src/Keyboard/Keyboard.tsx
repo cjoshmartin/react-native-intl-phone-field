@@ -82,7 +82,7 @@ function Keyboard(props: KeyboardProps) {
   }));
 
   const layout = useMemo(() => {
-    console.log('-- ⚠️  Rerender Keyboard--');
+    console.debug('-- ⚠️  Rerender Keyboard--');
     return KEYBOARD_LAYOUT.map((row, i) => {
       return <KeypadRow row={row} key={'row-' + i} onPress={props.onKeyPress} />;
     });

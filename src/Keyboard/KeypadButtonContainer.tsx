@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Pressable, PressableProps, StyleSheet, View, Text } from 'react-native';
 import { colors } from '../Styling/Colors';
+import { spacing } from '@/Styling/Sizing';
 // import { Box } from '@/components/ui/box';
 // import { GetColor } from '@/utils/get-color';
 
@@ -9,10 +10,12 @@ interface KeypadButtonContainerProps extends PressableProps {
   onPress?: PressableProps['onPress'];
   bgColor?: string | null;
   bgPressedColor?: string | null;
+  shouldDisableShadow?: boolean;
 }
 
 export default function KeypadButtonContainer({
   children,
+  shouldDisableShadow,
   bgColor = colors.white,
   bgPressedColor = colors.gray[300],
   ...props
@@ -34,6 +37,13 @@ export default function KeypadButtonContainer({
         style={[
           styles.container,
           { backgroundColor: (isCurrentlyPressed ? bgPressedColor : bgColor) ?? undefined },
+          !shouldDisableShadow && {
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.25,
+            shadowRadius: 2,
+            elevation: 2,
+          }
         ]}>
         {children}
       </View>
@@ -52,10 +62,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 2,
-    elevation: 2,
+    paddingVertical: spacing[2],
   },
 });

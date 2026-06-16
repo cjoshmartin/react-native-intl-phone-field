@@ -1,27 +1,48 @@
 # react-native-intl-phone-field
 
-An international phone number input for React Native with country selection, per-country number masking, and a custom keyboard that avoids the native soft keyboard.
+![shows changing the phone number country code](./readme_assets/fast_changing_country_code.gif)
+
+An international phone number input for React Native with country selection, per-country number masking, and a custom keyboard that avoids the native soft keyboard. Ideal for quick changing country codes, entering phone numbers or using bigger devices like tablets that do not have native support for phone number keyboards.
 
 ## Features
 
 - 270+ countries with flags, calling codes, and phone masks
-- Custom keyboard — no system keyboard flicker or layout shift
+- Custom keyboard — no system keyboard flicker or layout shift. Great for iPad or Android tablets.
 - Automatic country detection from the device locale on mount
 - Per-country number formatting (parentheses, dashes, spaces)
 - Country selector modal with search and recently-used countries
 - Copy / paste support with built-in feedback modals (customizable)
 - Cursor position tracking inside masked input
-- Filter countries via allow-list or deny-list
+- Filter countries via allow-list (whitelist) or deny-list (blacklist)
 - Fully customizable: swap in your own `TextInput`, `Pressable`, `Modal`, or feedback modals
 - Full TypeScript support
 
-## Installation
+Tested: 
+- Xiaomi Redmi Pad 2 9.7 (Android Tablet)
+- Galaxy A06 5G (Android Phone)
+- iPhone 16 Plus
+- iPad Pro 12.9"
 
-```sh
-npm install react-native-intl-phone-field
-```
 
-### Peer dependencies
+
+### Country code modal (with search and history)
+![Using the Country code modal](./readme_assets/change_phone_number_fields.gif)
+
+### On Paste
+![What happens on paste](./readme_assets/onPaste.gif)
+
+### Custom Keyboard
+![Showing Keyboard](./readme_assets/keyboard_showcase.gif)
+
+#### Keyboard on Android Tablet
+![](./readme_assets/android-tablet-l.gif)
+![](./readme_assets/android-tablet-p.gif)
+
+#### Keyboard on iPad 
+![](./readme_assets/ipad-l.gif)
+![](./readme_assets/ipad-p.gif)
+
+## Peer dependencies
 
 Install these if they are not already in your project:
 
@@ -36,6 +57,12 @@ npm install \
 ```
 
 Follow each library's setup guide for any native configuration required.
+
+## Installation
+
+```sh
+npm install react-native-intl-phone-field
+```
 
 ## Setup
 
@@ -56,8 +83,9 @@ export default function App() {
 ```
 
 ## Quick start
-
 `IntlPhoneField` is the ready-to-use component. Drop it in and handle the result via `onOutcomeChange`.
+
+> **See it in action:** [`App.tsx`](./App.tsx) in this repo is a working demo that uses `IntlPhoneField` with custom-styled inputs, a country deny-list, and outcome display — a good starting point to copy from.
 
 ```tsx
 import { IntlPhoneField, PhoneFieldOutcome } from 'react-native-intl-phone-field';
@@ -147,13 +175,20 @@ When the user taps **Copy**, the keyboard shows a "Copied" confirmation modal. W
 
 No configuration needed — the defaults work out of the box:
 
-- **Copy success** — a modal with the title "Copied" and the message "Phone number copied to clipboard."
-- **Paste error** — a modal with the title "Cannot Paste" and the message "Clipboard does not contain a valid phone number."
 
-Both dismiss when the user taps OK or taps the backdrop.
+#### Copy success
+a modal with the title "Copied" and the message "Phone number copied to clipboard."
+
+![](./readme_assets/copy_modal.png)
+
+#### Paste error 
+a modal with the title "Cannot Paste" and the message "Clipboard does not contain a valid phone number."
+
+![Paste error](./readme_assets/cannot_paste.png)
+
+
 
 ### Replacing the paste-error modal
-
 Pass a component that accepts `PasteErrorModalProps` to `underlinePasteErrorModal`:
 
 ```tsx

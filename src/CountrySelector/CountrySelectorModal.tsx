@@ -115,10 +115,10 @@ export function CountrySelectorModal(props: CountrySelectorModalProps) {
 
   const UserModal = useMemo(() => {
     if (props.underlineModal) {
-      console.log('underlineModal');
+      console.debug('underlineModal');
       return props.underlineModal;
     }
-    console.log('underlineModal - underfine');
+    console.debug('underlineModal - underfine');
     return undefined;
   }, [props.underlineModal]);
 
