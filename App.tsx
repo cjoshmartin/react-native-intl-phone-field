@@ -1,5 +1,5 @@
 import { CountryId } from 'src/enum/CountryIds';
-import { IntlPhoneField } from 'src/IntlPhoneField/IntlPhoneField';
+import { PhoneCountryInput } from 'src/PhoneCountryInput/PhoneCountryInput';
 import { PhoneFieldOutcome } from 'src/PhoneNumberField';
 import { spacing, borders } from 'src/Styling/Sizing';
 import React from 'react';
@@ -85,7 +85,7 @@ export default function App() {
     <PortalProvider>
       <SafeAreaProvider>
         <SafeAreaView style={{ flex: 1 }}>
-          <IntlPhoneField
+          <PhoneCountryInput
             underlineInput={StyledTextInput}
             underlineButton={StyledPhoneButton}
             underlineModal={null}

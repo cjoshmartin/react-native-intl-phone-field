@@ -9,6 +9,10 @@
     "screens",
     "navigation",
     "**/*.test.ts",
-    "**/*.test.tsx"
+    "**/*.test.tsx",
+    "babel.config.js",
+    "eslint.config.js",
+    "prettier.config.js",
+    "cesconfig.jsonc"
   ]
 }

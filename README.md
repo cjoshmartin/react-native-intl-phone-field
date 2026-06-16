@@ -1,4 +1,4 @@
-# react-native-intl-phone-field
+# react-native-phone-country-input
 
 ![shows changing the phone number country code](./readme_assets/fast_changing_country_code.gif)
 
@@ -61,7 +61,7 @@ Follow each library's setup guide for any native configuration required.
 ## Installation
 
 ```sh
-npm install react-native-intl-phone-field
+npm install react-native-phone-country-input
 ```
 
 ## Setup
@@ -83,12 +83,12 @@ export default function App() {
 ```
 
 ## Quick start
-`IntlPhoneField` is the ready-to-use component. Drop it in and handle the result via `onOutcomeChange`.
+`PhoneCountryInput` is the ready-to-use component. Drop it in and handle the result via `onOutcomeChange`.
 
-> **See it in action:** [`App.tsx`](./App.tsx) in this repo is a working demo that uses `IntlPhoneField` with custom-styled inputs, a country deny-list, and outcome display — a good starting point to copy from.
+> **See it in action:** [`App.tsx`](./App.tsx) in this repo is a working demo that uses `PhoneCountryInput` with custom-styled inputs, a country deny-list, and outcome display — a good starting point to copy from.
 
 ```tsx
-import { IntlPhoneField, PhoneFieldOutcome } from 'react-native-intl-phone-field';
+import { PhoneCountryInput, PhoneFieldOutcome } from 'react-native-phone-country-input';
 
 export default function MyScreen() {
   const handleChange = (outcome?: PhoneFieldOutcome) => {
@@ -98,11 +98,11 @@ export default function MyScreen() {
     }
   };
 
-  return <IntlPhoneField onOutcomeChange={handleChange} />;
+  return <PhoneCountryInput onOutcomeChange={handleChange} />;
 }
 ```
 
-## `IntlPhoneField` props
+## `PhoneCountryInput` props
 
 Extends all `TextInput` props plus:
 
@@ -122,7 +122,7 @@ Extends all `TextInput` props plus:
 
 ```tsx
 import { TextInput, Pressable } from 'react-native';
-import { IntlPhoneField } from 'react-native-intl-phone-field';
+import { PhoneCountryInput } from 'react-native-phone-country-input';
 
 function StyledInput(props: React.ComponentProps<typeof TextInput>) {
   return (
@@ -143,7 +143,7 @@ function StyledButton(props: React.ComponentProps<typeof Pressable>) {
 
 export default function MyScreen() {
   return (
-    <IntlPhoneField
+    <PhoneCountryInput
       underlineInput={StyledInput}
       underlineButton={StyledButton}
       onOutcomeChange={(outcome) => console.log(outcome)}
@@ -155,11 +155,11 @@ export default function MyScreen() {
 ### Country filtering example
 
 ```tsx
-import { IntlPhoneField, CountryId } from 'react-native-intl-phone-field';
+import { PhoneCountryInput, CountryId } from 'react-native-phone-country-input';
 
 const ALLOWED = [CountryId.UNITED_STATES, CountryId.CANADA, CountryId.MEXICO];
 
-<IntlPhoneField
+<PhoneCountryInput
   allowedCountryCodes={ALLOWED}
   onOutcomeChange={(outcome) => console.log(outcome)}
 />
@@ -193,7 +193,7 @@ Pass a component that accepts `PasteErrorModalProps` to `underlinePasteErrorModa
 
 ```tsx
 import { Modal, View, Text, Pressable } from 'react-native';
-import { IntlPhoneField, PasteErrorModalProps } from 'react-native-intl-phone-field';
+import { PhoneCountryInput, PasteErrorModalProps } from 'react-native-phone-country-input';
 
 function MyPasteErrorModal({ isPasteErrorVisible, dismissPasteError }: PasteErrorModalProps) {
   return (
@@ -211,7 +211,7 @@ function MyPasteErrorModal({ isPasteErrorVisible, dismissPasteError }: PasteErro
   );
 }
 
-<IntlPhoneField
+<PhoneCountryInput
   underlinePasteErrorModal={MyPasteErrorModal}
   onOutcomeChange={(outcome) => console.log(outcome)}
 />
@@ -223,7 +223,7 @@ Pass a component that accepts `CopySuccessModalProps` to `underlineCopySuccessMo
 
 ```tsx
 import { Modal, View, Text, Pressable } from 'react-native';
-import { IntlPhoneField, CopySuccessModalProps } from 'react-native-intl-phone-field';
+import { PhoneCountryInput, CopySuccessModalProps } from 'react-native-phone-country-input';
 
 function MyCopySuccessModal({ isCopySuccessVisible, dismissCopySuccess }: CopySuccessModalProps) {
   return (
@@ -237,7 +237,7 @@ function MyCopySuccessModal({ isCopySuccessVisible, dismissCopySuccess }: CopySu
   );
 }
 
-<IntlPhoneField
+<PhoneCountryInput
   underlineCopySuccessModal={MyCopySuccessModal}
   onOutcomeChange={(outcome) => console.log(outcome)}
 />
@@ -256,7 +256,7 @@ import {
   CountrySelector,
   Keyboard,
   PhoneFieldOutcome,
-} from 'react-native-intl-phone-field';
+} from 'react-native-phone-country-input';
 import { View } from 'react-native';
 
 export default function CustomPhoneInput({ onResult }: { onResult: (o: PhoneFieldOutcome) => void }) {
@@ -321,7 +321,7 @@ export default function CustomPhoneInput({ onResult }: { onResult: (o: PhoneFiel
 
 ### `usePhoneFieldState(params)`
 
-The state management hook that powers `IntlPhoneField`. Returns all state and handlers needed to wire up the sub-components independently.
+The state management hook that powers `PhoneCountryInput`. Returns all state and handlers needed to wire up the sub-components independently.
 
 **Params**
 
@@ -455,7 +455,7 @@ interface CountryCode {
 An enum with an entry for every supported country, e.g. `CountryId.UNITED_STATES`, `CountryId.UNITED_KINGDOM`, `CountryId.CANADA`. Import it to build allow/deny lists.
 
 ```ts
-import { CountryId } from 'react-native-intl-phone-field';
+import { CountryId } from 'react-native-phone-country-input';
 ```
 
 ---

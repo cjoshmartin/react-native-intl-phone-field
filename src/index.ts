@@ -1,6 +1,6 @@
 // Opinionated all-in-one component
-export { IntlPhoneField } from './IntlPhoneField/IntlPhoneField';
-export type { IntlPhoneFieldProps } from './IntlPhoneField/IntlPhoneField';
+export { PhoneCountryInput } from './PhoneCountryInput/PhoneCountryInput';
+export type { PhoneCountryInputProps } from './PhoneCountryInput/PhoneCountryInput';
 
 // Individual pieces
 export { PhoneNumberField } from './PhoneNumberField';

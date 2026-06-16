@@ -8,7 +8,7 @@ import { CountryId } from '../enum/CountryIds';
 
 import Keyboard, { CopySuccessModalProps, PasteErrorModalProps } from '../Keyboard/Keyboard';
 
-export interface IntlPhoneFieldProps extends PhoneNumberFieldProps {
+export interface PhoneCountryInputProps extends PhoneNumberFieldProps {
   underlineButton?: React.ComponentType<React.ComponentProps<typeof Pressable>> | null;
   underlineModal?: React.ComponentType<React.ComponentProps<typeof Modal>> | null;
   underlinePasteErrorModal?: React.ComponentType<PasteErrorModalProps> | null;
@@ -18,7 +18,7 @@ export interface IntlPhoneFieldProps extends PhoneNumberFieldProps {
   onOutcomeChange: (outcome?: PhoneFieldOutcome) => void;
 }
 
-export function IntlPhoneField({
+export function PhoneCountryInput({
   underlineButton,
   underlineModal,
   underlinePasteErrorModal,
@@ -28,7 +28,7 @@ export function IntlPhoneField({
   disallowedCountryCodes,
   onOutcomeChange,
   ...props
-}: IntlPhoneFieldProps) {
+}: PhoneCountryInputProps) {
   const {
     filteredCountryCodes,
     outcome,
