@@ -52,9 +52,18 @@ export function PhoneCountryInput({
   });
 
   useEffect(() => {
+    // sync updates between internal state and external state
     onOutcomeChange(outcome);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [outcome]);
+
+  useEffect(() => {
+    // set initual value on load but do not update afterwards
+    if (props.value) {
+      onChangeText(props.value);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onChangeText]);
 
   return (
     <>

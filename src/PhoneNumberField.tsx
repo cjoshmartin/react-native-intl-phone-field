@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { NativeSyntheticEvent, TextInput, TextInputSelectionChangeEventData } from 'react-native';
 
 import { CountryCode } from './consts/regions';
@@ -27,6 +27,14 @@ export function PhoneNumberField(props: PhoneNumberFieldProps) {
     return underlineInput;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [underlineInput, props.selection]);
+
+  useEffect(() => {
+    // set initual value on load but do not update afterwards
+    if (props.value && props.value.length > 1 && props.onChangeText) {
+      props.onChangeText(props.value);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.onChangeText]);
 
   return (
     <Input
