@@ -56,11 +56,13 @@ function Keyboard(props: KeyboardProps) {
     props.onPaste().then((success) => {
       if (!success) setIsPasteErrorVisible(true);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.onPaste]);
 
   const handleCopy = useCallback(() => {
     props.onCopy();
     setIsCopySuccessVisible(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.onCopy]);
 
   const isOpenShared = useSharedValue(props.isOpen);

@@ -53,7 +53,8 @@ export function PhoneCountryInput({
 
   useEffect(() => {
     onOutcomeChange(outcome);
-  }, [onOutcomeChange, outcome]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [outcome]);
 
   return (
     <>

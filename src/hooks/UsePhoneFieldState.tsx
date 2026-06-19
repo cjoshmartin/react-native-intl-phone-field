@@ -14,7 +14,7 @@ import {
   KEYPAD_KEY,
   SELECTION_TYPE,
 } from '../consts/KEYBOARD_LAYOUT';
-import { NativeSyntheticEvent, TextInputSelectionChangeEventData } from 'react-native';
+import { Keyboard, NativeSyntheticEvent, TextInputSelectionChangeEventData } from 'react-native';
 import { characterDeletion } from '../utils/characterDeletion';
 import { characterInsert } from '../utils/characterInsert';
 import { fromMaskedNumberToUnmaskedSelection } from '../utils/fromMaskedNumberToUnmaskedSelection';
@@ -66,7 +66,10 @@ export function usePhoneFieldState({
     hasBeenConsumed: true,
   });
 
-  const openKeyboard = useCallback(() => setIsKeyboardOpen(true), []);
+  const openKeyboard = useCallback(() => {
+    Keyboard.dismiss();
+    setIsKeyboardOpen(true);
+  }, []);
   const closeKeyboard = useCallback(() => setIsKeyboardOpen(false), []);
 
   const [isCountrySelectorOpen, setIsCountrySelectorOpen] = useState(false);
