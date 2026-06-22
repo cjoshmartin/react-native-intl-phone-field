@@ -2,7 +2,7 @@ module.exports = function (api) {
   api.cache(true);
   let plugins = [];
 
-  if (api.env() !== 'test') {
+  if (process.env.NODE_ENV !== 'test') {
     plugins.push('react-native-worklets/plugin');
   }
 
