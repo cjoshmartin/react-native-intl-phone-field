@@ -1,7 +1,31 @@
 {
   "name": "react-native-phone-country-input",
+  "license": "MIT",
   "version": "1.0.7",
-  "description": "International phone number input for React Native with country selection, masking, and a custom keyboard",
+  "description": "Phone number input for React Native & Expo — country picker, dial code selector, per-country masking, custom keyboard (no system keyboard flicker). Supports 270+ countries, tablets, iPad.",
+  "keywords": [
+    "react-native",
+    "expo",
+    "phone",
+    "phone-number",
+    "phone-input",
+    "phone-field",
+    "phone-number-input",
+    "country-code",
+    "country-picker",
+    "country-selector",
+    "international",
+    "dial-code",
+    "calling-code",
+    "phone-mask",
+    "mask",
+    "keyboard",
+    "form",
+    "input",
+    "typescript",
+    "tablet",
+    "ipad"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/cjoshmartin/react-native-phone-country-input"
