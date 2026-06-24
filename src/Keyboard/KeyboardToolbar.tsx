@@ -28,7 +28,7 @@ export default function KeyboardToolbar({ onClose, value, onCopy, onPaste }: Key
         </Pressable>
       </View>
       <Pressable
-        onPress={onClose}
+        onPressIn={onClose}
         style={{
           padding: 16,
         }}>
